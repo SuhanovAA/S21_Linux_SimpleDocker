@@ -48,3 +48,42 @@
 ![docker_restart](./images/part1/11.png)  
 ## Check in any way that the container is running.  
 ![docker_restart_check](./images/part1/12.png)  
+
+# Part 2. Операции с контейнером  
+## Прочитай конфигурационный файл *nginx.conf* внутри докер контейнера через команду *exec*.  
+- `docker exec [OPTIONS] CONTAINER COMMAND [ARG..]` -> `docker exec [CONTAINER] cat [FILE_PATH]` -> `docker exec musing_mahavira cat /etc/nginx/nginx.conf`  
+![docker_exec](./images/part2/01.png)  
+## Создай на локальной машине файл *nginx.conf*.  
+- `touch nginx.conf` -> скопировал настройки из conf докера  
+## Настрой в нем по пути */status* отдачу страницы статуса сервера **nginx**.  
+![location](./images/part2/02.png)  
+## Скопируй созданный файл *nginx.conf* внутрь докер-образа через команду `docker cp`.  
+- `docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH` -> `docker cp [SRC_PATH] [CONTAINER:DEST_PATH]` -> `docker cp nginx.conf f5cfd11922ce:/etc/nginx/`  
+![docker_cp](./images/part2/03.png)  
+## Перезапусти **nginx** внутри докер-образа через команду *exec*.  
+- `docker exec f5cfd11922ce nginx -s reload`  
+![docker_reload](./images/part2/04.png)  
+## Проверь, что по адресу *localhost:80/status* отдается страничка со статусом сервера **nginx**.  
+- open browser or `curl localhost:80/status`  
+![check_localhost_status](./images/part2/05.png)  
+## Экспортируй контейнер в файл *container.tar* через команду *export*.  
+- `docker export f5cfd11922ce > container.tar`  
+![export](./images/part2/06.png)  
+## Останови контейнер.  
+- `docker stop f5cfd11922ce`  
+![stop_container](./images/part2/07.png)  
+## Удали образ через `docker rmi [image_id|repository]`, не удаляя перед этим контейнеры.  
+- `docker rmi --force 2ac752d7aeb1`  
+![docker_remove](./images/part2/08.png)  
+`При удалении docker-образа выдает ошибку, так как контейнер все еще существует. При использовании флага -f или --force происходит принудительное удаление`  
+## Удали остановленный контейнер.  
+- `docker rm [CONTAINER]`  
+![docker_rm_container](./images/part2/09.png)  
+## Импортируй контейнер обратно через команду *import*.  
+- `docker import [archive_name] [Image_name]` -> `docker import -c 'CMD ["nginx", "-g", "daemon off;"]' container.tar ngld`  
+![docker_import](./images/part2/10.png)  
+## Запусти импортированный контейнер.  
+- `docker run -d -p 80:80 -p 443:443 ngld`  
+![docker_run](./images/part2/11.png)  
+## Проверь, что по адресу *localhost:80/status* отдается страничка со статусом сервера **nginx**.  
+![check_localhost](./images/part2/12.png)  

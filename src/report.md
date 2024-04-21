@@ -48,3 +48,42 @@
 ![docker_restart](./images/part1/11.png)  
 ## Проверь любым способом, что контейнер запустился.  
 ![docker_restart_check](./images/part1/12.png)  
+
+## Part 2. Operations with container  
+## Read the *nginx.conf* configuration file inside the docker container with the *exec* command.  
+- `docker exec [OPTIONS] CONTAINER COMMAND [ARG..]` -> `docker exec [CONTAINER] cat [FILE_PATH]`  
+![docker_exec](./images/part2/01.png)  
+## Create a *nginx.conf* file on a local machine.  
+- `touch nginx.conf` -> copy settings nginx.conf   
+## Configure it on the */status* path to return the **nginx** server status page.  
+![location](./images/part2/02.png)  
+## Copy the created *nginx.conf* file inside the docker image using the `docker cp` command.  
+- `docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH` -> `docker cp [SRC_PATH] [CONTAINER:DEST_PATH]` -> `docker cp nginx.conf f5cfd11922ce:/etc/nginx/`  
+![docker_cp](./images/part2/03.png)  
+## Restart **nginx** inside the docker image with *exec*.  
+- `docker exec f5cfd11922ce nginx -s reload`  
+![docker_reload](./images/part2/04.png)  
+## Check that *localhost:80/status* returns the **nginx** server status page.  
+- open browser or `curl localhost:80/status`  
+![check_localhost_status](./images/part2/05.png)  
+## Export the container to a *container.tar* file with the *export* command.  
+- `docker export f5cfd11922ce > container.tar`  
+![export](./images/part2/06.png)  
+## Stop the container.   
+- `docker stop f5cfd11922ce`  
+![stop_container](./images/part2/07.png)  
+## Delete the image with `docker rmi [image_id|repository]`without removing the container first.  
+- `docker rmi --force 2ac752d7aeb1`  
+![docker_remove](./images/part2/08.png)  
+`When deleting a docker image, it returns an error because the container still exists. When using the -f or --force flag, a forced deletion occurs`  
+## Delete stopped container.  
+- `docker rm [CONTAINER]`  
+![docker_rm_container](./images/part2/09.png)  
+## Import the container back using the *import*command.  
+- `docker import [archive_name] [Image_name]` -> `docker import -c 'CMD ["nginx", "-g", "daemon off;"]' container.tar ngld`  
+![docker_import](./images/part2/10.png)  
+## Run the imported container.  
+- `docker run -d -p 80:80 -p 443:443 ngld`  
+![docker_run](./images/part2/11.png)  
+## Check that *localhost:80/status* returns the **nginx** server status page.  
+![check_localhost](./images/part2/12.png)  
