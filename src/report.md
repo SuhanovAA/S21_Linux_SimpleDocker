@@ -87,3 +87,25 @@
 ![docker_run](./images/part2/11.png)  
 ## Check that *localhost:80/status* returns the **nginx** server status page.  
 ![check_localhost](./images/part2/12.png)  
+  
+# Part 3. Mini web server  
+- To complete subsequent tasks, you will need an installed FCGI library `apt install gcc spawn-fcgi libfcgi-dev`  
+- Launched the container through 81 ports `docker run -d -p 81:81 ngld`  
+## Write a mini server in **C** and **FastCgi** that will return a simple page saying `Hello World!`.  
+![fcgi](./images/part3/01.png)  
+## Run the written mini server via *spawn-fcgi* on port 8080.  
+- Copy write mini-server in container. `docker cp hwrld_fcgi.c 758ff04bb678:/home`  
+- Go to container `docker exec -it 758ff04bb678 bash`
+![cp_hwrld](./images/part3/02.png)  
+- `apt install gcc spawn-fcgi libfcgi-dev`  
+- `gcc -o server_fcgi hwrld_fcgi.c -lfcgi`  
+- `spawn-fcgi -p 8080 ./server_fcgi`  
+![spawn_fcgi](./images/part3/03.png)  
+## Write your own *nginx.conf* that will proxy all requests from port 81 to *127.0.0.1:8080*.  
+![nginx_conf](./images/part3/04.png)  
+![nginx_conf](./images/part3/05.png)  
+- `docker exec 758ff04bb678 nginx -s reload`  
+## Check that browser on *localhost:81* returns the page you wrote.  
+![check_browser](./images/part3/06.png)
+## Put the *nginx.conf* file under *./nginx/nginx.conf* (you will need this later).  
+![nginx_conf_cp](./images/part3/05.png)  

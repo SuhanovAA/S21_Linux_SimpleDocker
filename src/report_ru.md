@@ -87,3 +87,25 @@
 ![docker_run](./images/part2/11.png)  
 ## Проверь, что по адресу *localhost:80/status* отдается страничка со статусом сервера **nginx**.  
 ![check_localhost](./images/part2/12.png)  
+
+# Part 3. Мини веб-сервер  
+- Для выполнения последующих заданий потребуется установленная FCGI либа `apt install gcc spawn-fcgi libfcgi-dev`  
+- Запустил контейнер через 81 порт `docker run -d -p 81:81 ngld`  
+## Напиши мини-сервер на **C** и **FastCgi**, который будет возвращать простейшую страничку с надписью `Hello World!`.  
+![fcgi](./images/part3/01.png)  
+## Запусти написанный мини-сервер через *spawn-fcgi* на порту 8080.  
+- Написанный мини-сервер скопируем в контейнер. `docker cp hwrld_fcgi.c 758ff04bb678:/home`  
+- Зайдем в контейнер `docker exec -it 758ff04bb678 bash`
+![cp_hwrld](./images/part3/02.png)  
+- `apt install gcc spawn-fcgi libfcgi-dev`  
+- `gcc -o server_fcgi hwrld_fcgi.c -lfcgi`  
+- `spawn-fcgi -p 8080 ./server_fcgi`  
+![spawn_fcgi](./images/part3/03.png)  
+## Напиши свой *nginx.conf*, который будет проксировать все запросы с 81 порта на *127.0.0.1:8080*.  
+![nginx_conf](./images/part3/04.png)  
+![nginx_conf](./images/part3/05.png)  
+- `docker exec 758ff04bb678 nginx -s reload`  
+## Проверь, что в браузере по *localhost:81* отдается написанная тобой страничка.  
+![check_browser](./images/part3/06.png)
+## Положи файл *nginx.conf* по пути *./nginx/nginx.conf* (это понадобится позже).  
+![nginx_conf_cp](./images/part3/05.png)  
