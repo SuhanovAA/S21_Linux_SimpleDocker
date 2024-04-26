@@ -109,3 +109,28 @@
 ![check_browser](./images/part3/06.png)
 ## Положи файл *nginx.conf* по пути *./nginx/nginx.conf* (это понадобится позже).  
 ![nginx_conf_cp](./images/part3/05.png)  
+
+# Part 4. Свой докер  
+## Напиши свой докер-образ, который:  
+### 1) собирает исходники мини сервера на FastCgi из [Части 3](#part-3-мини-веб-сервер);  
+### 2) запускает его на 8080 порту;  
+### 3) копирует внутрь образа написанный *./nginx/nginx.conf*;  
+### 4) запускает **nginx**.  
+![dockerfile](./images/part4/01.png)  
+## Собери написанный докер-образ через `docker build` при этом указав имя и тег.  
+- `docker build -t my_docker .` -> my_docker:latest  
+## Проверь через `docker images`, что все собралось корректно.  
+![docker_images](./images/part4/02.png)  
+## Запусти собранный докер-образ с маппингом 81 порта на 80 на локальной машине и маппингом папки *./nginx* внутрь контейнера по адресу, где лежат конфигурационные файлы **nginx**'а (см. [Часть 2](#part-2-операции-с-контейнером)).  
+- `docker run -d -p 80:81 -v /home/vm/part4/nginx/nginx.conf:/etc/nginx/nginx.conf --name server_container my_docker`  
+![docker_ps](./images/part4/03.png)  
+## Проверь, что по localhost:80 доступна страничка написанного мини сервера.  
+![curl_localhost:80](./images/part4/04.png)  
+## Допиши в *./nginx/nginx.conf* проксирование странички */status*, по которой надо отдавать статус сервера **nginx**.  
+![nginx_status](./images/part4/05.png)  
+## Перезапусти докер-образ.  
+- `docker restart server_container`  
+![restart_container](./images/part4/06.png)  
+## Проверь, что теперь по *localhost:80/status* отдается страничка со статусом **nginx**  
+![curl_localhost:80/status](./images/part4/07.png)  
+

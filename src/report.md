@@ -109,3 +109,28 @@
 ![check_browser](./images/part3/06.png)
 ## Put the *nginx.conf* file under *./nginx/nginx.conf* (you will need this later).  
 ![nginx_conf_cp](./images/part3/05.png)  
+
+# Part 4. Your own docker  
+## Write your own docker image that:  
+### 1) builds mini server sources on FastCgi from [Part 3](#part-3-mini-web-server);  
+### 2) runs it on port 8080;  
+### 3) copies inside the image written *./nginx/nginx.conf*;  
+### 4) runs **nginx**.  
+![dockerfile](./images/part4/01.png)  
+## Build the written docker image with `docker build`, specifying the name and tag.  
+- `docker build -t my_docker .` -> my_docker:latest  
+## Check with `docker images` that everything is built correctly.  
+![docker_images](./images/part4/02.png)  
+## Run the built docker image by mapping port 81 to 80 on the local machine and mapping the *./nginx* folder inside the container to the address where the **nginx** configuration files are located (see [Part 2](#part-2-operations-with-container)).  
+- `docker run -d -p 80:81 -v /home/vm/part4/nginx/nginx.conf:/etc/nginx/nginx.conf --name server_container my_docker`  
+![docker_ps](./images/part4/03.png)  
+## Check that the page of the written mini server is available on localhost:80.  
+![curl_localhost:80](./images/part4/04.png)  
+## Add proxying of */status* page in *./nginx/nginx.conf* to return the **nginx** server status.  
+![nginx_status](./images/part4/05.png)  
+## Restart docker image.  
+- `docker restart server_container`  
+![restart_container](./images/part4/06.png)  
+## Check that *localhost:80/status* now returns a page with **nginx** status.  
+![curl_localhost:80/status](./images/part4/07.png)  
+
