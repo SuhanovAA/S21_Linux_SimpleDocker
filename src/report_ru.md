@@ -134,3 +134,8 @@
 ## Проверь, что теперь по *localhost:80/status* отдается страничка со статусом **nginx**  
 ![curl_localhost:80/status](./images/part4/07.png)  
 
+# Part 5. **Dockle**  
+## Просканируй образ из предыдущего задания через `dockle [image_id|repository]  
+## Исправь образ так, чтобы при проверке через **dockle** не было ошибок и предупреждений.  
+![check_dockle](./images/part5/02.png)  
+

@@ -134,3 +134,8 @@
 ## Check that *localhost:80/status* now returns a page with **nginx** status.  
 ![curl_localhost:80/status](./images/part4/07.png)  
 
+# Part 5. **Dockle**  
+## Check the image from the previous task with `dockle [image_id|repository]`.  
+## Fix the image so that there are no errors or warnings when checking with **dockle**.  
+![check_dockle](./images/part5/02.png)  
+
