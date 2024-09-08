@@ -1,34 +1,35 @@
-FROM nginx 
+FROM nginx
 
-RUN apt-get update \
-    && apt-get install -y gcc spawn-fcgi libfcgi-dev \
-    && rm -rf /var/lib/apt/lists 
+COPY nginx.conf /etc/nginx/
+COPY start-server.sh /
+COPY server.c /
 
-COPY ./server.c ./s21/src/server.c
-COPY ./run.sh ./s21/src/run.sh
+RUN apt-get update &&  \
+    apt-get install -y gcc spawn-fcgi libfcgi-dev && \ 
+    rm -rf /var/lib/apt/lists
+    
+RUN gcc server.c -o webserver -lpthread -lfcgi && \
+    chmod +x /start-server.sh
 
-RUN chmod u-s usr/bin/chfn; \
-	chmod g-s usr/sbin/unix_chkpwd; \
-	chmod g-s usr/bin/expiry; \
-	chmod u-s usr/bin/umount; \
-	chmod u-s usr/bin/su; \
-	chmod u-s usr/bin/su; \
-	chmod u-s usr/bin/passwd; \
-	chmod g-s usr/bin/chage; \
-	chmod u-s usr/bin/chsh; \
-	chmod u-s usr/bin/mount; \
-	chmod u-s usr/bin/newgrp; \
-	chmod u-s usr/bin/gpasswd
+RUN chown -R nginx:nginx /etc/nginx/nginx.conf; \
+    chown -R nginx:nginx /var/cache/nginx; \
+    chown -R nginx:nginx /home; \
+    touch /var/run/nginx.pid; \
+    chown -R nginx:nginx /var/run/nginx.pid; \
+    chmod u-s /usr/bin/gpasswd; \
+    chmod u-s /usr/bin/newgrp; \
+    chmod u-s /bin/su; \
+    chmod u-s /bin/mount; \
+    chmod u-s /bin/umount; \
+    chmod u-s /usr/bin/chsh; \
+    chmod u-s /usr/bin/chfn; \
+    chmod u-s /usr/bin/chsh; \
+    chmod 255 /usr/bin/expiry; \
+    chmod 255 /usr/bin/wall; \
+    chmod 255 /sbin/unix_chkpwd; \
+    chmod 255 /usr/bin/chage; \
+    chmod 755 /usr/bin/passwd
 
-WORKDIR /s21/src/
-
-RUN gcc -o server server.c -lfcgi \
-	&& chmod +x run.sh
-
-RUN groupadd -g 999 tmpuser \
-	&& useradd -r -u 999 -g tmpuser tmpuser
-USER tmpuser
-
-HEALTHCHECK --interval=5m --timeout=30s CMD curl -f http://localhost/ || exit 1
-
-ENTRYPOINT [ "./run.sh" ]
+USER nginx
+HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/ || exit 1
+ENTRYPOINT ["./start-server.sh"]

@@ -1,14 +1,12 @@
-FROM nginx:latest
+FROM nginx
 
-LABEL maintainer="elektrno@student.21-school.ru"
-
+COPY nginx.conf /etc/nginx/
+COPY start-server.sh /
 COPY server.c /
-COPY run.sh /
 
-RUN apt-get update \
-    && apt-get install -y gcc spawn-fcgi libfcgi-dev
+RUN apt-get update &&  \
+    apt-get install -y gcc spawn-fcgi libfcgi-dev && \ 
+    gcc server.c -o webserver -l fcgi && \
+    chmod +x /start-server.sh
 
-RUN gcc -o server server.c -lfcgi \
-    && chmod +x /run.sh
-
-ENTRYPOINT [ "./run.sh" ]
+ENTRYPOINT ["./start-server.sh"]
